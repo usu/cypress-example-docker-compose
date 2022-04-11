@@ -32,7 +32,6 @@ jobs:
           tags: cypress-example/webapp:latest
           cache-from: type=gha,scope=webapp
           cache-to: type=gha,scope=webapp,mode=max
-          build-args: BUILDKIT_INLINE_CACHE=1
 
       - name: Build docker image (e23)
         uses: docker/build-push-action@v2
@@ -44,8 +43,7 @@ jobs:
           tags: cypress-example/e2e:latest
           cache-from: type=gha,scope=e2e
           cache-to: type=gha,scope=e2e,mode=max
-          build-args: BUILDKIT_INLINE_CACHE=1
 
-      - run: docker-compose build --build-arg BUILDKIT_INLINE_CACHE=1
+      - run: docker-compose build
 
       - run: docker-compose up --abort-on-container-exit --exit-code-from e2e
