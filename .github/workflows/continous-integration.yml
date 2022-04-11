@@ -47,6 +47,4 @@ jobs:
           cache-from: type=gha,scope=e2e
           cache-to: type=gha,scope=e2e,mode=max
 
-      - run: docker-compose build
-
       - run: docker-compose up --abort-on-container-exit --exit-code-from e2e
