@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+ 
+  e2e-tests:
+    name: "Tests: End-to-end"
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846 # tag=v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build docker image (webapp)
+        uses: docker/build-push-action@v2
+        with:
+          file: webapp/Dockerfile
+          context: './webapp'
+          push: false
+          load: true
+          tags: cypress-example/webapp:latest
+          cache-from: type=gha,scope=webapp
+          cache-to: type=gha,scope=webapp,mode=max
+
+      - name: Build docker image (e23)
+        uses: docker/build-push-action@v2
+        with:
+          file: e2e/Dockerfile
+          context: './e2e'
+          push: false
+          load: true
+          tags: cypress-example/e2e:latest
+          cache-from: type=gha,scope=e2e
+          cache-to: type=gha,scope=e2e,mode=max
+
+      - run: docker-compose build
+
+      - run: docker-compose up --abort-on-container-exit --exit-code-from e2e
