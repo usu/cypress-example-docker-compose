@@ -1,8 +1,11 @@
 version: '3'
 services:
   web:
+    image: cypress-example/webapp
     build:
       context: ./webapp
+      cache_from:
+        - cypress-example/webapp
     container_name: apache
     restart: always
     # we can see the server running at "localhost:8080"
@@ -10,8 +13,11 @@ services:
       - "8080:80"
 
   e2e:
+    image: cypress-example/e2e
     build:
       context: ./e2e
+      cache_from:
+        - cypress-example/e2e
     container_name: cypress
     depends_on:
       - web
